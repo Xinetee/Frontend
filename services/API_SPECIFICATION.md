@@ -531,10 +531,6 @@ Authorization: Bearer {jwt_token}
 
 ---
 
-## 📞 **CONTACT**
-
-For any questions about this API specification, please contact the development team.
-
 **Last Updated:** $(date)
 **Version:** 1.0.0
 **Status:** Ready for Implementation
