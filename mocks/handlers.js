@@ -17,6 +17,18 @@ export const handlers = [
     }, { status: 201 });
   }),
 
+  // Mock Add Product endpoint
+  http.post('/supply-chain/products', () => {
+    return HttpResponse.json({
+        id: 'mock-product-id',
+        name: 'Sample Product',
+        category: 'Electronics',
+        quantity: 100,
+        manufacturer: 'Sample Manufacturer',
+        createdAt: new Date().toISOString(), 
+      }, { status: 201 });
+  }),
+
   // Mock file upload endpoint
   http.post('/api/upload', () => {
     return HttpResponse.json({
@@ -24,7 +36,6 @@ export const handlers = [
       fileId: 'mock-file-id',
     }, { status: 200 });
   }),
-
 
   // Mock fetch files endpoint for /storage/files
   http.get('/storage/files', () => {

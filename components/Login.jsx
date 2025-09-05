@@ -23,6 +23,10 @@ function Login() {
     // checkWalletConnection();
   }, []);
 
+  useEffect(() => {
+    setError("");
+  }, [loginType]);
+
   const checkWalletConnection = async () => {
     try {
       if (window.ethereum) {
