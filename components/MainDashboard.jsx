@@ -9,53 +9,42 @@ import {
   FiBox,
   FiCheckCircle,
 } from "react-icons/fi";
+import AddProductForm from "./AddProductForm";
 
-function MainDashboard() {
+function MainDashboard({ defaultTab }) {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [activeTab, setActiveTab] = useState("dashboard");
-  const { token, userType, username } = useContext(AuthContext);
+  const [activeTab, setActiveTab] = useState(defaultTab || "dashboard");
 
-  // Read tab from URL parameter
+  // Sync tab with URL params
   useEffect(() => {
     const tabFromUrl = searchParams.get("tab");
-    if (
-      tabFromUrl &&
-      ["add-products", "add-checkpoints"].includes(tabFromUrl)
-    ) {
+    if (tabFromUrl && tabs[tabFromUrl]) {
       setActiveTab(tabFromUrl);
-    } else {
+    } else if (!defaultTab) {
       setActiveTab("dashboard");
     }
-  }, [searchParams]);
+  }, [defaultTab, searchParams]);
 
   // Update URL when tab changes
   const handleTabChange = (tabId) => {
     setActiveTab(tabId);
-    if (tabId === "dashboard") {
-      setSearchParams({});
-    } else {
-      setSearchParams({ tab: tabId });
-    }
+    tabId === "dashboard"
+      ? setSearchParams({})
+      : setSearchParams({ tab: tabId });
   };
 
-  const renderTabContent = () => {
-    switch (activeTab) {
-      case "dashboard":
-        return <DashboardTab />;
-      case "add-products":
-        return <AddProductsTab />;
-      case "add-checkpoints":
-        return <AddCheckpointsTab />;
-      default:
-        return <DashboardTab />;
-    }
+  // Available tabs mapped to components
+  const tabs = {
+    dashboard: <DashboardTab />,
+    "add-products": <AddProductForm />,
+    "add-checkpoints": <AddCheckpointsTab />,
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Tab Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {renderTabContent()}
+        {tabs[activeTab] || tabs.dashboard}
       </div>
     </div>
   );
@@ -304,184 +293,7 @@ function DashboardTab() {
 
 // Add Products Tab Component
 function AddProductsTab() {
-  const [formData, setFormData] = useState({
-    productName: "",
-    productId: "",
-    description: "",
-    category: "",
-    origin: "",
-    quantity: "",
-    unit: "kg",
-  });
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Handle product creation logic here
-    console.log("Product data:", formData);
-    alert("Product added successfully!");
-    setFormData({
-      productName: "",
-      productId: "",
-      description: "",
-      category: "",
-      origin: "",
-      quantity: "",
-      unit: "kg",
-    });
-  };
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  return (
-    <div className="max-w-2xl mx-auto">
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-        <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-6">
-          Add New Product
-        </h2>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Product Name *
-              </label>
-              <input
-                type="text"
-                name="productName"
-                value={formData.productName}
-                onChange={handleChange}
-                required
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white"
-                placeholder="e.g., Organic Coffee Beans"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Product ID *
-              </label>
-              <input
-                type="text"
-                name="productId"
-                value={formData.productId}
-                onChange={handleChange}
-                required
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white"
-                placeholder="e.g., PROD001"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Description
-            </label>
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              rows={3}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white"
-              placeholder="Product description..."
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Category
-              </label>
-              <select
-                name="category"
-                value={formData.category}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white"
-              >
-                <option value="">Select Category</option>
-                <option value="agriculture">Agriculture</option>
-                <option value="manufacturing">Manufacturing</option>
-                <option value="electronics">Electronics</option>
-                <option value="textiles">Textiles</option>
-                <option value="food">Food & Beverage</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Origin
-              </label>
-              <input
-                type="text"
-                name="origin"
-                value={formData.origin}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white"
-                placeholder="e.g., Colombia"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Quantity
-            </label>
-            <div className="flex max-w-xs">
-              <input
-                type="number"
-                name="quantity"
-                value={formData.quantity}
-                onChange={handleChange}
-                className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-l-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white"
-                placeholder="100"
-              />
-              <select
-                name="unit"
-                value={formData.unit}
-                onChange={handleChange}
-                className="px-3 py-2 border border-l-0 border-gray-300 dark:border-gray-600 rounded-r-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white"
-              >
-                <option value="kg">kg</option>
-                <option value="tons">tons</option>
-                <option value="pieces">pieces</option>
-                <option value="liters">liters</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="flex justify-end space-x-3">
-            <button
-              type="button"
-              onClick={() =>
-                setFormData({
-                  productName: "",
-                  productId: "",
-                  description: "",
-                  category: "",
-                  origin: "",
-                  quantity: "",
-                  unit: "kg",
-                })
-              }
-              className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
-            >
-              Reset
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-            >
-              Add Product
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
+  return <AddProductForm />;
 }
 
 // Add Checkpoints Tab Component

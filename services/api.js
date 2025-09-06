@@ -3,6 +3,7 @@ class MockApiService {
   constructor() {
     this.users = JSON.parse(localStorage.getItem("mockUsers")) || [];
     this.nextId = this.users.length + 1;
+    this.products = JSON.parse(localStorage.getItem("mockProducts")) || [];
     this.delay = 500; // Simulate network delay
   }
 
@@ -17,9 +18,51 @@ class MockApiService {
     localStorage.setItem("mockUsers", JSON.stringify(this.users));
   }
 
+  // Save products to localStorage
+  _saveProducts() {
+    localStorage.setItem("mockProducts", JSON.stringify(this.products));
+  }
+
   // Generate mock JWT token
   _generateToken(userId) {
     return `mock_jwt_${userId}_${Date.now()}`;
+  }
+
+
+  // ===== ADD PRODUCT API =====
+  async addProduct(productData) {
+    console.log("🚀 API: addProduct called with:", productData);
+    await this.simulateApiCall();
+
+    if (!productData.name || !productData.category) {
+      throw new Error("Missing required fields: name or category");
+    }
+
+    if (!productData.batchNumber || !productData.productionDate) {
+    throw new Error("Missing required fields: batchNumber or productionDate");
+  }
+
+    if (productData.quantity < 0) {
+      throw new Error("Quantity cannot be negative");
+    }
+
+    const newProduct = {
+      id: `mock-product-${this.products.length + 1}`,
+      name: productData.name,
+      category: productData.category,
+      quantity: productData.quantity || 0,
+      manufacturer: productData.manufacturer || "Unknown",
+      batchNumber: productData.batchNumber,
+      productionDate: productData.productionDate,
+      expiryDate: productData.expiryDate || null,
+      createdAt: new Date().toISOString(),
+    };
+
+    this.products.push(newProduct);
+    this._saveProducts();
+
+    console.log("✅ API: Product added successfully:", newProduct);
+    return newProduct;
   }
 
   // ===== REGISTRATION APIs =====

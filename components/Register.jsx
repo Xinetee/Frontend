@@ -2,7 +2,7 @@ import { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../App";
 import { useTheme } from "../contexts/ThemeContext";
-import mockApi from "../services/api";
+import mockApi from "../services/api.js";
 
 function Register() {
   const [registrationType, setRegistrationType] = useState("form"); // "form" or "wallet"

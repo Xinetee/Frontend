@@ -9,6 +9,7 @@ import { ethers } from "ethers";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import IndividualRegister from "./components/IndividualRegister";
+import AddProductForm from "./components/AddProductForm";
 import OrganizationRegister from "./components/OrganizationRegister";
 import MainDashboard from "./components/MainDashboard";
 import Profile from "./components/Profile";
@@ -187,6 +188,12 @@ function App() {
               <Route
                 path="/dashboard"
                 element={<MainDashboard />} // Main Dashboard - Supply Chain Traceability
+              />
+              <Route
+                path="/supply-chain/products"
+                element={
+                  token ? <AddProductForm /> : <Navigate to="/login" replace />
+                }
               />
               <Route
                 path="/profile"
